@@ -57,11 +57,11 @@ make shell-db  # psql no container do PostgreSQL
 ### 1. Variáveis de ambiente necessárias
 
 ```env
-# apps/api/.env
+# backend/.env
 MP_ACCESS_TOKEN=TEST-...
 MP_WEBHOOK_SECRET=seu-webhook-secret
 
-# apps/web/.env
+# frontend/.env
 VITE_MP_PUBLIC_KEY=TEST-...
 ```
 
@@ -114,9 +114,8 @@ docker compose -f docker-compose.prod.yml up -d
 
 ```
 boxing-club/
-├── apps/
-│   ├── api/          # Fastify + Prisma + PostgreSQL
-│   └── web/          # React + Vite + Tailwind
+├── frontend/             # React + Vite + TypeScript + Tailwind
+├── backend/              # Fastify + Prisma + PostgreSQL
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
 ├── .env.example
