@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boxing Club · Ribeirão Preto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#faf7f0',
+            ink: '#0e1410',
+            'bc-green': '#0d6b3a',
+            'bc-green-dark': '#0a5530',
+            'bc-red': '#c41e2a',
+            'bc-red-dark': '#8d141e',
+          },
+          fontFamily: {
+            display: ['"Bebas Neue"', 'sans-serif'],
+            body: ['Manrope', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root { --bc-green: #0d6b3a; --bc-red: #c41e2a; --cream: #faf7f0; --ink: #0e1410; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); font-family: 'Manrope', system-ui, sans-serif; color: var(--ink); }
+    ::selection { background: var(--bc-red); color: white; }
+
+    .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.01em; }
+
+    /* Reveal */
+    @keyframes reveal-up { from { opacity: 0; transform: translateY(40px);} to { opacity: 1; transform: translateY(0);} }
+    .reveal-up        { animation: reveal-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .reveal-delay-200 { animation-delay: 0.2s; }
+    .animate-reveal-up{ animation: reveal-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes float    { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-10px);} }
+    .animate-float      { animation: float 5s ease-in-out infinite; }
+
+    @keyframes spin-slow { to { transform: rotate(360deg);} }
+    .animate-spin-slow   { animation: spin-slow 30s linear infinite; }
+
+    @keyframes page-in { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+    .animate-page-in   { animation: page-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    /* Modal */
+    @keyframes fade-in   { from { opacity: 0;} to { opacity: 1;} }
+    .animate-fade-in     { animation: fade-in 0.2s ease both; }
+    @keyframes modal-in  { from { opacity: 0; transform: translateY(20px) scale(0.97);} to { opacity: 1; transform: none;} }
+    .animate-modal-in    { animation: modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    @keyframes drawer-in { from { transform: translateX(20px); opacity: 0;} to { transform: none; opacity: 1;} }
+    .animate-drawer-in   { animation: drawer-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    @keyframes dropdown-in { from { opacity: 0; transform: translateY(-4px) scale(0.98);} to { opacity: 1; transform: none;} }
+    .animate-dropdown-in { animation: dropdown-in 0.18s ease both; transform-origin: top right; }
+
+    @keyframes mini-in { from { opacity: 0; transform: translateY(20px) scale(0.96);} to { opacity: 1; transform: none;} }
+    .animate-mini-in   { animation: mini-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: bottom right; }
+
+    /* Toasts */
+    @keyframes toast-in  { from { opacity: 0; transform: translateX(20px);} to { opacity: 1; transform: none;} }
+    .animate-toast-in    { animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    /* Line clamp */
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    ::-webkit-scrollbar          { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track    { background: var(--cream); }
+    ::-webkit-scrollbar-thumb    { background: #d6d1c2; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--bc-green); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React + Babel (pinned) -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Logo + Services -->
+  <script src="logo-data.js"></script>
+  <script src="contact.js"></script>
+  <script src="services/services.js"></script>
+
+  <!-- Icons + UI primitives + Contexts -->
+  <script type="text/babel" src="icons.jsx"></script>
+  <script type="text/babel" src="components/ui.jsx"></script>
+  <script type="text/babel" src="context/contexts.jsx"></script>
+
+  <!-- Navigation chrome -->
+  <script type="text/babel" src="components/Navbar.jsx"></script>
+  <script type="text/babel" src="components/Footer.jsx"></script>
+  <script type="text/babel" src="components/CartDrawer.jsx"></script>
+  <script type="text/babel" src="components/PartnersSection.jsx"></script>
+  <script type="text/babel" src="components/ProductCarousel.jsx"></script>
+  <script type="text/babel" src="components/MultiImageUpload.jsx"></script>
+  <script type="text/babel" src="components/MiniMenu.jsx"></script>
+
+  <!-- Public pages -->
+  <script type="text/babel" src="pages/Home.jsx"></script>
+  <script type="text/babel" src="pages/Sobre.jsx"></script>
+  <script type="text/babel" src="pages/Horarios.jsx"></script>
+  <script type="text/babel" src="pages/Planos.jsx"></script>
+  <script type="text/babel" src="pages/Loja.jsx"></script>
+  <script type="text/babel" src="pages/Contato.jsx"></script>
+  <script type="text/babel" src="pages/Auth.jsx"></script>
+  <script type="text/babel" src="pages/Account.jsx"></script>
+
+  <!-- Admin -->
+  <script type="text/babel" src="admin/AdminLayout.jsx"></script>
+  <script type="text/babel" src="admin/AdminDashboard.jsx"></script>
+  <script type="text/babel" src="admin/AdminSchedule.jsx"></script>
+  <script type="text/babel" src="admin/AdminStore.jsx"></script>
+  <script type="text/babel" src="admin/AdminOrders.jsx"></script>
+  <script type="text/babel" src="admin/AdminUsers.jsx"></script>
+
+  <!-- App entry -->
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EmailTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELLED
+  PAUSED
+  EXPIRED
+}
+
+enum OrderStatus {
+  entregue
+  pago
+  pendente
+  nao_pago
+  cancelado
+  recusado
+  expirado
+  erro
+}
+
+enum PaymentMethod {
+  pix
+  credit_card
+  debit_card
+  boleto
+}
+
+model User {
+  id               String    @id @default(cuid())
+  firstName        String
+  lastName         String
+  email            String    @unique
+  passwordHash     String
+  role             Role      @default(USER)
+  avatar           String?
+  emailVerified    Boolean   @default(false)
+  emailVerifiedAt  DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  subscription  Subscription?
+  cartItems     CartItem[]
+  orders        Order[]
+  emailTokens   EmailToken[]
+}
+
+model EmailToken {
+  id        String         @id @default(cuid())
+  userId    String
+  token     String         @unique
+  type      EmailTokenType
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Plan {
+  id            String   @id
+  name          String
+  price         Decimal  @db.Decimal(10, 2)
+  originalPrice Decimal? @db.Decimal(10, 2)
+  period        String
+  cycleMonths   Int
+  tagline       String
+  features      String[]
+  accent        String
+  highlight     Boolean  @default(false)
+  badge         String?
+  active        Boolean  @default(true)
+  mpPlanId      String?
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String             @unique
+  planId          String
+  status          SubscriptionStatus @default(PENDING)
+  startDate       DateTime
+  nextBilling     DateTime
+  cancelledAt     DateTime?
+  mpPreapprovalId String?            @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id])
+}
+
+model ClassCategory {
+  id    String @id
+  label String
+  color String
+
+  schedules ClassSchedule[]
+}
+
+model ClassSchedule {
+  id         String @id @default(cuid())
+  day        Int
+  time       String
+  categoryId String
+  teacher    String @default("Equipe BC")
+  notes      String @default("")
+
+  category ClassCategory @relation(fields: [categoryId], references: [id])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  category    String
+  stock       Int      @default(0)
+  images      String[]
+  glyph       String   @default("box")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  qty       Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  number          Int           @unique @default(autoincrement())
+  userId          String
+  total           Decimal       @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod
+  status          OrderStatus   @default(pendente)
+  statusReason    String?
+  statusHistory   Json          @default("[]")
+  mpPaymentId     String?       @unique
+  mpPreferenceId  String?
+  date            DateTime      @default(now())
+  deliveredAt     DateTime?
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String?
+  name      String
+  price     Decimal @db.Decimal(10, 2)
+  qty       Int
+  glyph     String?
+  image     String?
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
