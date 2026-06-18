@@ -80,11 +80,14 @@ export async function subscriptionsRoutes(app: FastifyInstance) {
     const nextBilling = new Date(now);
     nextBilling.setMonth(nextBilling.getMonth() + plan.cycleMonths);
 
-    // MP's /preapproval create requires a valid MP account email for the payer.
-    // In the redirect flow, we use the plan's checkout URL directly — the user
-    // authenticates with their MP account on MP's side. The webhook then links
-    // the created preapproval back to this subscription by payer_email + planId.
-    const initPoint = `https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=${plan.mpPlanId}`;
+    // Sandbox tokens (TEST-) must use the sandbox checkout domain; production tokens
+    // use the live domain. Sending a sandbox plan ID to the production checkout
+    // causes "e-mail não corresponde à assinatura" because the plan doesn't exist there.
+    const mpBase = env.MP_ACCESS_TOKEN?.startsWith('TEST-')
+      ? 'https://sandbox.mercadopago.com.br'
+      : 'https://www.mercadopago.com.br';
+    const initPoint = `${mpBase}/subscriptions/checkout?preapproval_plan_id=${plan.mpPlanId}`;
+    app.log.info({ initPoint, planId: plan.id, mpPlanId: plan.mpPlanId }, '[subscriptions] initPoint gerado');
 
     // Upsert subscription (user may have a cancelled one)
     const subscription = await app.prisma.subscription.upsert({

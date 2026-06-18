@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Card, Badge, Button, Skeleton, EmptyState } from '@/components/ui';
-import { IconCheck, IconCalendar, IconCreditCard, IconDumbbell, IconArrowRight } from '@/icons';
+import { IconCheck, IconCalendar, IconCreditCard, IconDumbbell, IconArrowRight, IconAlertTriangle } from '@/icons';
 import { AccountShell } from './AccountShell';
-import { usePlans, Plan, useMySubscription, useCreateSubscription, useCancelSubscription } from '@/api/hooks';
+import { usePlans, Plan, Subscription, useMySubscription, useCreateSubscription, useCancelSubscription } from '@/api/hooks';
 import { useToast } from '@/stores/toastStore';
 import { useConfirmStore } from '@/stores/confirmStore';
 
@@ -13,6 +13,40 @@ function InfoTile({ icon, label, value, accent = 'green' }: { icon: React.ReactN
     <div className="bg-cream border border-stone-200 p-4">
       <div className={`flex items-center gap-2 text-xs uppercase tracking-[0.2em] ${color} font-semibold mb-2`}>{icon}{label}</div>
       <div className="font-display text-2xl tracking-wider text-ink">{value}</div>
+    </div>
+  );
+}
+
+// ── Pending Payment Card ───────────────────────────────────────────
+function PendingPaymentCard({ subscription, loading, onResume }: { subscription: Subscription; loading: boolean; onResume: () => void }) {
+  const p = subscription.plan;
+  return (
+    <div className="border-2 border-amber-400 bg-amber-50 p-6 mb-6 animate-reveal-up">
+      <div className="flex items-start gap-3 mb-4">
+        <IconAlertTriangle size={20} className="text-amber-500 flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold text-amber-900 text-sm">Pagamento pendente</p>
+          <p className="text-amber-700 text-xs mt-0.5">
+            Seu pagamento do <strong>{p.name}</strong> não foi concluído. Clique abaixo para retomar de onde parou.
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-baseline gap-1">
+          <span className="text-stone-500 text-sm">R$</span>
+          <span className="font-display text-3xl text-ink leading-none">{Number(p.price).toFixed(2).split('.')[0]}</span>
+          <span className="text-stone-500 text-sm">,{Number(p.price).toFixed(2).split('.')[1]}</span>
+          <span className="text-xs text-stone-500 ml-1">{p.period}</span>
+        </div>
+        <Button
+          variant={p.accent === 'green' ? 'green' : 'primary'}
+          loading={loading}
+          onClick={onResume}
+          rightIcon={<IconArrowRight size={14} />}
+        >
+          Retomar pagamento
+        </Button>
+      </div>
     </div>
   );
 }
@@ -160,12 +194,11 @@ export function ContaPlanos() {
         /* ── No active subscription ── */
         <>
           {subscription?.status === 'PENDING' && (
-            <div className="bg-amber-50 border border-amber-200 p-4 mb-5 text-sm text-amber-800 flex items-start gap-2">
-              <IconCalendar size={16} className="flex-shrink-0 mt-0.5" />
-              <span>
-                Sua assinatura está <strong>pendente de pagamento</strong>. Se você já pagou, o status será atualizado em breve.
-              </span>
-            </div>
+            <PendingPaymentCard
+              subscription={subscription}
+              loading={loadingId === subscription.planId}
+              onResume={() => handleSubscribe(subscription.planId)}
+            />
           )}
           {subscription?.status === 'CANCELLED' && (
             <div className="bg-stone-50 border border-stone-200 p-4 mb-5 text-sm text-stone-600">
