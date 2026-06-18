@@ -16,7 +16,7 @@ services:
 
   api:
     build:
-      context: ./apps/api
+      context: ./backend
       target: production
     ports:
       - "3001:3001"
@@ -33,7 +33,7 @@ services:
 
   web:
     build:
-      context: ./apps/web
+      context: ./frontend
       target: production
     ports:
       - "80:80"
