@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Spinner } from '@/components/ui';
 import { IconCheck, IconX } from '@/icons';
 import { useVerifyEmail, useResendByToken } from '@/api/auth';
@@ -21,6 +21,7 @@ function getErrorInfo(errorCode: string | undefined) {
 
 export function ConfirmarEmail() {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const addToast = useToastStore((s) => s.add);
   const calledRef = useRef(false);
 
@@ -33,6 +34,12 @@ export function ConfirmarEmail() {
     if (token) verify.mutate(token);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  useEffect(() => {
+    if (!verify.isSuccess) return;
+    const timer = setTimeout(() => navigate('/'), 2000);
+    return () => clearTimeout(timer);
+  }, [verify.isSuccess, navigate]);
 
   const handleResend = async () => {
     if (!token) return;
@@ -66,10 +73,8 @@ export function ConfirmarEmail() {
               <IconCheck size={32} className="text-bc-green"/>
             </div>
             <h1 className="font-display text-4xl tracking-wider text-ink mb-2">E-MAIL VERIFICADO</h1>
-            <p className="text-sm text-stone-600 mb-6">Sua conta foi confirmada com sucesso.</p>
-            <Link to="/login">
-              <Button variant="green" size="lg" className="w-full">ENTRAR</Button>
-            </Link>
+            <p className="text-sm text-stone-600 mb-2">Sua conta foi confirmada com sucesso.</p>
+            <p className="text-xs text-stone-400">Redirecionando...</p>
           </>
         )}
 

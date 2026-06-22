@@ -7,6 +7,7 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES: z.string().default('15m'),
   JWT_REFRESH_EXPIRES: z.string().default('7d'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  PORT: z.coerce.number().optional(),
   API_PORT: z.coerce.number().default(3001),
   WEB_URL: z.string().url().default('http://localhost:5173'),
   API_URL: z.string().url().default('http://localhost:3001'),

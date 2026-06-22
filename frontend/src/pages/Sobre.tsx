@@ -11,9 +11,9 @@ const TAGS = ['Iniciantes', 'Avançados', 'Mulheres', 'Jovens', 'Adultos', 'Quem
 
 export function Sobre() {
   return (
-    <section className="relative pt-32 pb-24 sm:pt-40 sm:pb-32 bg-white overflow-hidden">
+    <section className="relative pt-32 pb-24 sm:pt-40 sm:pb-32 bg-cream overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1 flex">
-        <div className="flex-1 bg-bc-green" /><div className="flex-1 bg-white" /><div className="flex-1 bg-bc-red" />
+        <div className="flex-1 bg-bc-green" /><div className="flex-1 bg-cream" /><div className="flex-1 bg-bc-red" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-5 sm:px-8">

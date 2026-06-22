@@ -1,0 +1,7 @@
+[build]
+dockerfilePath = "Dockerfile"
+dockerBuildTarget = "production"
+
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

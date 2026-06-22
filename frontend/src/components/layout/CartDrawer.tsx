@@ -13,7 +13,7 @@ export function CartDrawer() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const { data: serverCart } = useCart(isOpen && !!user);
+  const { data: serverCart } = useCart(!!user);
   const updateItem = useUpdateCartItem();
   const clearCart = useClearCart();
   const createOrder = useCreateOrder();
