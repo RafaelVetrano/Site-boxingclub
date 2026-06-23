@@ -107,13 +107,6 @@ export function AdminLogin() {
             </Button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-stone-200">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-semibold mb-2">Credenciais de demonstração</div>
-            <div className="bg-stone-50 border border-stone-200 px-3 py-2 text-xs font-mono text-stone-700 space-y-1">
-              <div>admin@boxingclub.com</div>
-              <div>admin123</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

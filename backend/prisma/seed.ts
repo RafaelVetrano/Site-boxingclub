@@ -48,7 +48,18 @@ async function main() {
 
   await prisma.plan.upsert({
     where: { id: 'semestral' },
-    update: {},
+    update: {
+      price: 189.99,
+      originalPrice: 209.99,
+      tagline: 'Mesmo plano, preço menor pagando 6 meses',
+      features: [
+        'Acesso a todas as aulas',
+        'Preço fixo garantido por 6 meses',
+        'Avaliação física inclusa',
+        'Acompanhamento técnico',
+        'Aulas em todos os horários',
+      ],
+    },
     create: {
       id: 'semestral',
       name: 'Plano Semestral',
@@ -56,14 +67,13 @@ async function main() {
       originalPrice: 209.99,
       period: '/mês',
       cycleMonths: 6,
-      tagline: 'Economize no plano semestral',
+      tagline: 'Mesmo plano, preço menor pagando 6 meses',
       features: [
         'Acesso a todas as aulas',
-        '6 meses de treino contínuo',
+        'Preço fixo garantido por 6 meses',
         'Avaliação física inclusa',
-        'Acompanhamento técnico premium',
-        'Camiseta Boxing Club de presente',
-        'Prioridade nos eventos da academia',
+        'Acompanhamento técnico',
+        'Aulas em todos os horários',
       ],
       accent: 'red',
       highlight: true,

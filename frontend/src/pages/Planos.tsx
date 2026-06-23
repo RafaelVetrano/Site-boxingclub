@@ -26,10 +26,17 @@ interface PlanCardProps {
   compact?: boolean;
   loadingId: string | null;
   onSubscribe: (planId: string) => void;
+  baseFeatures?: string[];
 }
 
-function PlanCard({ p, idx, compact = false, loadingId, onSubscribe }: PlanCardProps) {
+function PlanCard({ p, idx, compact = false, loadingId, onSubscribe, baseFeatures = [] }: PlanCardProps) {
   const isHighlight = p.highlight;
+
+  const savings =
+    p.originalPrice && p.cycleMonths
+      ? Math.round((Number(p.originalPrice) - Number(p.price)) * p.cycleMonths)
+      : null;
+
   return (
     <div className="relative animate-reveal-up" style={{ animationDelay: `${idx * 150 + 100}ms` }}>
       {isHighlight && p.badge && (
@@ -64,23 +71,30 @@ function PlanCard({ p, idx, compact = false, loadingId, onSubscribe }: PlanCardP
           <div className="flex items-center gap-3 mt-2 flex-wrap">
             <span className="text-sm text-stone-500">{p.period}</span>
             {p.originalPrice && (
-              <>
-                <span className="text-sm text-stone-400 line-through">R$ {Number(p.originalPrice).toFixed(2).replace('.', ',')}</span>
-                <span className="text-[10px] uppercase tracking-widest bg-bc-green text-white px-2 py-0.5 font-semibold">Economize 10%</span>
-              </>
+              <span className="text-sm text-stone-400 line-through">R$ {Number(p.originalPrice).toFixed(2).replace('.', ',')}</span>
+            )}
+            {savings !== null && (
+              <span className="text-[10px] uppercase tracking-widest bg-bc-red text-white px-2 py-0.5 font-semibold">
+                Economize R$ {savings} em 6 meses
+              </span>
             )}
           </div>
         </div>
 
         <ul className="space-y-3 mb-9">
-          {p.features.map((feat) => (
-            <li key={feat} className="flex items-start gap-3 text-sm text-stone-700">
-              <span className={`flex-shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center ${p.accent === 'green' ? 'bg-bc-green/10 text-bc-green' : 'bg-bc-red/10 text-bc-red'}`}>
-                <IconCheck size={12} strokeWidth={3} />
-              </span>
-              <span>{feat}</span>
-            </li>
-          ))}
+          {p.features.map((feat) => {
+            const isAdvantage = isHighlight && baseFeatures.length > 0 && !baseFeatures.includes(feat);
+            return (
+              <li key={feat} className="flex items-start gap-3 text-sm">
+                <span className={`flex-shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center ${
+                  isAdvantage ? 'bg-bc-red/10 text-bc-red' : 'bg-stone-100 text-stone-400'
+                }`}>
+                  <IconCheck size={12} strokeWidth={3} />
+                </span>
+                <span className={isAdvantage ? 'font-semibold text-ink' : 'text-stone-600'}>{feat}</span>
+              </li>
+            );
+          })}
         </ul>
 
         <Button
@@ -273,15 +287,19 @@ export function Planos() {
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {plansLoading
             ? Array.from({ length: 2 }).map((_, i) => <PlanSkeleton key={i} />)
-            : plans.map((p, idx) => (
-                <PlanCard
-                  key={p.id}
-                  p={p}
-                  idx={idx}
-                  loadingId={loadingId}
-                  onSubscribe={handleSubscribe}
-                />
-              ))}
+            : (() => {
+                const baseFeatures = plans.find((pl) => !pl.highlight)?.features ?? [];
+                return plans.map((p, idx) => (
+                  <PlanCard
+                    key={p.id}
+                    p={p}
+                    idx={idx}
+                    loadingId={loadingId}
+                    onSubscribe={handleSubscribe}
+                    baseFeatures={baseFeatures}
+                  />
+                ));
+              })()}
         </div>
 
         <PartnersSection />
