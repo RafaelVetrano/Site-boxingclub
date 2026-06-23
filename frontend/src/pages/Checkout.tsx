@@ -110,7 +110,7 @@ export function Checkout() {
               <div className="bg-white border border-stone-200 p-8 text-center">
                 <p className="text-stone-600 mb-2 text-sm">
                   {!MP_PUBLIC_KEY
-                    ? 'VITE_MP_PUBLIC_KEY não configurado.'
+                    ? 'Pagamentos estão desativados nesta versão demo.'
                     : 'Preferência de pagamento não gerada. Tente criar o pedido novamente.'}
                 </p>
                 <Link

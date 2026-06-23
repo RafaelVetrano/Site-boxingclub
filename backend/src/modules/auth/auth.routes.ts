@@ -91,15 +91,21 @@ export async function authRoutes(app: FastifyInstance) {
       }
 
       const passwordHash = await bcrypt.hash(body.password, SALT_ROUNDS);
+      const autoVerify = !env.RESEND_API_KEY;
       const user = await app.prisma.user.create({
         data: {
           firstName: body.firstName,
           lastName: body.lastName,
           email: body.email,
           passwordHash,
-          emailVerified: false,
+          emailVerified: autoVerify,
+          emailVerifiedAt: autoVerify ? new Date() : null,
         },
       });
+
+      if (autoVerify) {
+        return reply.status(201).send({ message: 'Conta criada! Já pode fazer login.' });
+      }
 
       const token = randomUUID();
       await app.prisma.emailToken.create({

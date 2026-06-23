@@ -10,6 +10,8 @@ import { ToastContainer, ConfirmModal } from '@/components/ui';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/layout/CartDrawer';
+import { DemoBanner } from '@/components/layout/DemoBanner';
+import { DemoWatermark } from '@/components/layout/DemoWatermark';
 import { routes } from '@/routes';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -59,8 +61,12 @@ function AppLayout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
 
+  const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
+
   return (
     <div className="bg-cream text-ink min-h-screen antialiased font-body flex flex-col">
+      {isDemo && <DemoBanner />}
+      {isDemo && <DemoWatermark />}
       {!isAdmin && <Navbar />}
       <main key={location.pathname} className="flex-1 animate-page-in">
         <Routes>

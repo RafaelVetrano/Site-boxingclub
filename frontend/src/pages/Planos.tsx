@@ -227,8 +227,10 @@ export function Planos() {
       const result = await createSubscription.mutateAsync(planId);
       window.open(result.initPoint, '_blank');
     } catch (e: any) {
+      const code = e?.response?.data?.error;
       const msg = e?.response?.data?.message ?? 'Tente novamente.';
-      toast.error('Erro ao assinar', msg);
+      const title = code === 'MP_NOT_CONFIGURED' ? 'Pagamentos desativados' : 'Erro ao assinar';
+      toast.error(title, msg);
     } finally {
       setLoadingId(null);
     }
