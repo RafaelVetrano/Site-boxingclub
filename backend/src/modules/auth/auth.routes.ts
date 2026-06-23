@@ -228,7 +228,7 @@ export async function authRoutes(app: FastifyInstance) {
       return reply.status(410).send({ code: 'TOKEN_EXPIRED', message: 'O link de confirmação expirou.', statusCode: 410 });
     }
 
-    await app.prisma.$transaction([
+    const [user] = await app.prisma.$transaction([
       app.prisma.user.update({
         where: { id: emailToken.userId },
         data: { emailVerified: true, emailVerifiedAt: new Date() },
@@ -239,7 +239,11 @@ export async function authRoutes(app: FastifyInstance) {
       }),
     ]);
 
-    return reply.status(200).send({ code: 'EMAIL_VERIFIED', message: 'E-mail confirmado com sucesso!' });
+    const accessToken = signAccess(app, user.id, user.role);
+    const refreshToken = signRefresh(app, user.id);
+    reply.setCookie(REFRESH_COOKIE, refreshToken, cookieOpts(7 * 24 * 60 * 60));
+
+    return reply.status(200).send({ accessToken, user: userSafe(user) });
   });
 
   // POST /auth/resend-verification

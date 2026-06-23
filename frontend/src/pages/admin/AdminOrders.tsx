@@ -187,7 +187,7 @@ export function AdminOrders() {
   const toast = useToast();
   const confirmStore = useConfirmStore();
 
-  const [tab, setTab] = useState<'approved' | 'problems'>('approved');
+  const [tab, setTab] = useState<'approved' | 'problems'>('problems');
   const [period, setPeriod] = useState<'today' | 'week' | 'month' | 'all' | 'custom'>('all');
   const [customRange, setCustomRange] = useState({ from: '', to: '' });
   const [filterStatus, setFilterStatus] = useState('all');
@@ -291,7 +291,7 @@ export function AdminOrders() {
         ] as const).map((t) => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => { setTab(t.id); setFilterStatus('all'); setPage(1); }}
             className={`px-5 py-3 text-sm font-semibold tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 ${tab === t.id ? `${t.active} text-ink` : 'border-transparent text-stone-500 hover:text-ink'}`}
           >
             <span className={`w-2 h-2 rounded-full ${t.dot}`} />

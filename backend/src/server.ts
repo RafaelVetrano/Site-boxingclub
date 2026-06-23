@@ -5,8 +5,9 @@ async function main() {
   const app = await buildApp();
 
   try {
-    await app.listen({ port: env.API_PORT, host: '0.0.0.0' });
-    console.log(`🥊 API running at http://0.0.0.0:${env.API_PORT}`);
+    const port = env.PORT ?? env.API_PORT;
+    await app.listen({ port, host: '0.0.0.0' });
+    console.log(`🥊 API running at http://0.0.0.0:${port}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

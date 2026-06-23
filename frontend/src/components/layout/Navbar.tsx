@@ -20,7 +20,7 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const { user, logout } = useAuthStore();
-  const { itemCount, open: openCart } = useCartStore();
+  const { itemCount, open: openCart, setItems } = useCartStore();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -50,6 +50,7 @@ export function Navbar() {
     setMenuOpen(false);
     try { await api.post('/auth/logout'); } catch { /* ignore */ }
     logout();
+    setItems([]);
     toast.success('Até logo!', 'Você saiu da conta.');
     navigate('/');
   };

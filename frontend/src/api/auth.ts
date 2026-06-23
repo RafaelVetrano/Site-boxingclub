@@ -59,9 +59,14 @@ export function useLogout() {
 }
 
 export function useVerifyEmail() {
+  const { setUser, setAccessToken } = useAuthStore();
   return useMutation({
     mutationFn: (token: string) =>
-      api.post('/auth/verify-email', { token }).then((r) => r.data),
+      api.post<{ accessToken: string; user: AuthUser }>('/auth/verify-email', { token }).then((r) => r.data),
+    onSuccess: (data) => {
+      setAccessToken(data.accessToken);
+      setUser(data.user);
+    },
   });
 }
 
