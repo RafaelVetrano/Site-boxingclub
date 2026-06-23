@@ -1,13 +1,56 @@
-# Boxing Club
+# 🥊 Boxing Club
 
-Site full-stack da academia de boxe Boxing Club — Ribeirão Preto / SP.
+Sistema full-stack de gestão para academias de boxe — cadastro de alunos, planos de assinatura e pagamentos recorrentes integrados ao Mercado Pago.
 
-## Pré-requisitos
+> 💼 **Recrutador(a)?** A seção abaixo explica o projeto sem termos técnicos. Para detalhes de instalação e arquitetura, veja [Documentação Técnica](#documentação-técnica).
+
+---
+
+## 📋 Sobre o projeto
+
+O Boxing Club é uma plataforma criada para academias de luta gerenciarem alunos e assinaturas de forma simples: o aluno se cadastra no site, escolhe um plano e paga diretamente pelo Mercado Pago — sem precisar de planilhas ou controle manual.
+
+Desenvolvi o projeto sozinho, do zero, cobrindo todas as camadas de um sistema real:
+
+| Camada | O que faz | Tecnologias |
+|---|---|---|
+| 🎨 **Frontend** | Telas que o usuário vê e usa | React, TypeScript, Tailwind CSS |
+| ⚙️ **Backend** | Regras de negócio e segurança | Fastify (Node.js), Prisma |
+| 🗄️ **Banco de dados** | Armazena alunos, planos e pagamentos | PostgreSQL |
+| 💳 **Pagamentos** | Cobrança recorrente automática | Mercado Pago |
+| 📦 **Infraestrutura** | Ambiente padronizado e replicável | Docker |
+
+
+🔗 **Versão online para teste:** [em breve — link do deploy]
+
+## ✅ O que esse projeto demonstra na prática
+
+- Construção de um sistema completo, do banco de dados à interface — não apenas uma tela estática
+- Integração com gateway de pagamento real (Mercado Pago), incluindo confirmação automática via webhook
+- Organização de código profissional (monorepo, variáveis de ambiente separadas, ambiente Docker)
+- Boas práticas de segurança: nenhuma credencial sensível fica exposta no código
+
+---
+
+## 🛠️ Documentação Técnica
+
+> A partir daqui, conteúdo voltado para desenvolvedores que queiram rodar ou avaliar o código localmente.
+
+### Stack completa
+
+- **Frontend:** React + Vite + TypeScript + Tailwind CSS
+- **Backend:** Fastify + Prisma ORM
+- **Banco de dados:** PostgreSQL
+- **Pagamentos:** Mercado Pago (assinaturas recorrentes via `preapproval_plan`)
+- **Infraestrutura:** Docker + Docker Compose (dev e produção)
+- **Gerenciador de pacotes:** pnpm (monorepo)
+
+### Pré-requisitos
 
 - [Docker](https://www.docker.com/) + Docker Compose v2
 - [pnpm](https://pnpm.io/) ≥ 9 (opcional, para desenvolvimento local sem Docker)
 
-## Setup
+### Setup
 
 ```bash
 # 1. Clone e configure variáveis de ambiente
@@ -24,24 +67,18 @@ docker compose exec api pnpm prisma migrate deploy
 docker compose exec api pnpm prisma db seed
 ```
 
-## URLs
+### URLs
 
 | Serviço | URL |
-|---------|-----|
+|---|---|
 | Frontend | http://localhost:5173 |
 | API | http://localhost:3001 |
 | Health check | http://localhost:3001/health |
 
-## Credenciais padrão
 
-| Campo | Valor |
-|-------|-------|
-| Email | admin@boxingclub.com |
-| Senha | admin123 |
+### Comandos Makefile
 
-## Comandos Makefile
-
-```bash
+```
 make up        # Sobe todos os serviços em background
 make down      # Para todos os serviços
 make logs      # Stream de logs de todos os serviços
@@ -52,65 +89,13 @@ make shell-api # Shell interativo no container da API
 make shell-db  # psql no container do PostgreSQL
 ```
 
-## Desenvolvimento com Mercado Pago
-
-### 1. Variáveis de ambiente necessárias
-
-```env
-# backend/.env
-MP_ACCESS_TOKEN=TEST-...
-MP_WEBHOOK_SECRET=seu-webhook-secret
-
-# frontend/.env
-VITE_MP_PUBLIC_KEY=TEST-...
-```
-
-### 2. Webhooks locais com ngrok
-
-Para receber webhooks do MP localmente, exponha a porta 3001:
-
-```bash
-ngrok http 3001
-# Copie a URL HTTPS gerada (ex: https://abc123.ngrok.io)
-```
-
-Atualize o `.env`:
-
-```env
-API_URL=https://abc123.ngrok.io
-MP_WEBHOOK_SECRET=segredo-do-painel-mp
-```
-
-Configure a URL `https://abc123.ngrok.io/payments/webhook/mercadopago` no painel do Mercado Pago → Suas integrações → Webhooks.
-
-### 3. Sincronizar planos de assinatura no MP
-
-Após subir a API e popular o banco (seed), execute:
-
-```bash
-curl -X POST http://localhost:3001/admin/plans/sync-mp \
-  -H "Authorization: Bearer SEU_TOKEN_ADMIN"
-```
-
-Isso cria os `preapproval_plan` no MP e salva os `mpPlanId` no banco.
-
-### 4. Cartões de teste
-
-| Cartão | Número | CVV | Vencimento | Resultado |
-|--------|--------|-----|------------|-----------|
-| Visa aprovado | 4509 9535 6623 3704 | 123 | qualquer futura | APROVADO |
-| Visa recusado | 4000 0000 0000 0002 | 123 | qualquer futura | RECUSADO |
-| Mastercard aprovado | 5031 7557 3453 0604 | 123 | 11/25 | APROVADO |
-
-**CPF para testes:** 12345678909
-
-## Produção
+### Produção
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-## Estrutura
+### Estrutura do projeto
 
 ```
 boxing-club/
@@ -121,3 +106,7 @@ boxing-club/
 ├── .env.example
 └── Makefile
 ```
+
+---
+
+📫 Desenvolvido por **Rafael Vetrano Cairo** — [GitHub](https://github.com/RafaelVetrano) · [LinkedIn](https://www.linkedin.com/in/rafael-vetrano-37a833232/)
